@@ -121,29 +121,41 @@ def interpret_predictions(predictions, labels):
 
 def print_results(results, text):
     """Sonuçları düzgün bir şekilde yazdırır"""
-    print("\n" + "="*50)
-    print(f"METİN: {text}")
-    print("="*50)
-    print(f"SALDIRGAN MI: {results['metin_saldirgan_mi']}")
+    # Renk kodları
+    RED = '\033[91m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    BLUE = '\033[94m'
+    MAGENTA = '\033[95m'
+    CYAN = '\033[96m'
+    BOLD = '\033[1m'
+    END = '\033[0m'
     
-    print("\nETİKETLER:")
+    print("\n" + BOLD + "="*50 + END)
+    print(f"{CYAN}METİN:{END} {text}")
+    print(BOLD + "="*50 + END)
+    print(f"{BOLD}SALDIRGAN MI:{END} {RED if results['metin_saldirgan_mi'] == 'Evet' else GREEN}{results['metin_saldirgan_mi']}{END}")
+    
+    print(f"\n{BOLD}ETİKETLER:{END}")
     if results['tahmin_edilen_etiketler']:
         for label in results['tahmin_edilen_etiketler']:
-            print(f"  - {label}")
+            print(f"  - {YELLOW}{label}{END}")
     else:
-        print("  - Etiket bulunamadı")
+        print(f"  - {RED}Etiket bulunamadı{END}")
     
-    print("\nETİKET OLASILIKLARI:")
+    print(f"\n{BOLD}ETİKET OLASILIKLARI:{END}")
     for label, prob in results['etiket_olasılıkları'].items():
-        print(f"  - {label}: {prob}")
+        prob_float = float(prob)
+        color = RED if prob_float > 0.7 else YELLOW if prob_float > 0.3 else GREEN
+        print(f"  - {label}: {color}{prob}{END}")
     
     if results['metin_saldirgan_mi'] == "Evet":
-        print(f"\nHEDEFLİ Mİ: {results['hedefli_mi']}")
+        print(f"\n{BOLD}HEDEFLİ Mİ:{END} {RED if results['hedefli_mi'] == 'Evet' else GREEN}{results['hedefli_mi']}{END}")
         if results['hedefli_mi'] == "Evet":
-            print(f"HEDEF TÜRÜ: {results['hedef_turu']}")
+            print(f"{BOLD}HEDEF TÜRÜ:{END} {MAGENTA}{results['hedef_turu']}{END}")
     
-    print(f"\nKARAR VERMESİ ZOR MU: {results['karar_vermesi_zor_mu']}")
-    print("="*50 + "\n")
+    print(f"\n{BOLD}KARAR VERMESİ ZOR MU:{END} {YELLOW if results['karar_vermesi_zor_mu'] == 'Evet' else GREEN}{results['karar_vermesi_zor_mu']}{END}")
+    print(BOLD + "="*50 + END + "\n")
 
 def main():
     # Argüman ayrıştırıcı
